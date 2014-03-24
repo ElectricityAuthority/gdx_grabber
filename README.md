@@ -24,7 +24,7 @@ extraction dir
 this downloads and extracts all gdx files since 1 January 2008 to the extraction
 dir.  Specifing the --override option, overwrites any existing annual zip files. 
 
-Default use is daily with a crontab:
+Default use is for periodic updates; i.e. daily with crontab/schedular:
 
     15 7 * * * /usr/bin/python /home/gdxgrab/gdxgrab.py >> log.tx 2>&1
 this downloads and overwrites the last month of GDX files, as per
