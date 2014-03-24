@@ -148,7 +148,7 @@ class gdx_grab():
         for a in s.find_all('a', href=True):
             if 'FP_' in a['href']:
                 if "_I" not in a['href']:  # ignore interim pricing
-                    name = a['href'].split('/')[2]
+                    name = a['href'].split('/')[-1]
                     r = urllib2.urlopen(self.gdx_host + name)
                     gdx = r.read()
                     if self.test:
