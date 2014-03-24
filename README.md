@@ -22,7 +22,7 @@ Two mode, mutually exclusive, operation:
     -d, --download      download mode
     -f, --filelist      filelist mode
 
-Download mode -d, --download
+###Download mode -d, --download
 ----------------------------
 
 Used either on:
