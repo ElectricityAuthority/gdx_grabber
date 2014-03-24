@@ -5,7 +5,7 @@ Auto downloader/extractor for  vSPD GDX zip files from
 http://reports.ea.govt.nz/vSPDDD.aspx
 
 Copyright (C) 2014 Electricity Authority, New Zealand.
-See, https://github.com/ElectricityAuthority/LICENSE/blob/master/LICENSE.md
+https://github.com/ElectricityAuthority/LICENSE/blob/master/LICENSE.md
 
 Used to connect, download, extract and save daily vSPD Electricity market data.
 
