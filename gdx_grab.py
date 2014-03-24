@@ -75,13 +75,13 @@ logger.setLevel(logging.INFO)
 class gdx_grab():
     """This class acts as an automatic downloader for NZ electricity market
        vSPD GDX files.  There are two modes of operation:
-            (a) archival mode --archive_mode=True;
+            (a) archival mode --archive;
                     - downloads all Final price GDX files from the start of
                       year to current;
-                    - loops through years, download zips (overide=True)
+                    - loops through years, download zips (use --overide to overwrite)
                       decompresses/extracts GDX files from zip;
                     - then downloads individual GDX files from current month.
-            (b) daily mode --archive_mode=False;
+            (b) daily mode (default);
                     - use with a daily crontab entry for most recent GDX file.
                     - downloads and over-wrights last month of GDX files.
     """
