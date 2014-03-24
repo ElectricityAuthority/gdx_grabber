@@ -43,14 +43,24 @@ import urllib2
 import os
 from bs4 import BeautifulSoup
 #Setup command line option and argument parsing
-parser = argparse.ArgumentParser(add_help=False)
+parser = argparse.ArgumentParser(description='vSPD automatic GDX file downloader, extractor and FileNameList.inc generator')
+group = parser.add_mutually_exclusive_group()
+group.add_argument('-d', '--download', action='store_true', dest='download',
+                    help='download mode')
+group.add_argument('-f', '--filelist', action='store_true', dest='filelist',
+                    help='filelist mode')
 parser.add_argument('--gdx_host', action="store", dest='gdx_host',
-                    default='http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX/')
+                    default='http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX/',
+                    help='url pointer (default: http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX/')
 parser.add_argument('--gdx_path', action='store', dest='gdx_path',
-                    default=os.getcwd() + '/')
-parser.add_argument('--year', action='store', dest='year', default=datetime.now().year)
-parser.add_argument('--archive', action='store_true', dest='archive', default=False)
-parser.add_argument('--override', action='store_true', dest='override', default=False)
+                    default=os.getcwd() + '/',
+                    help='path for archive zip file downloads and extraction dir (default: current working directory)')
+parser.add_argument('--year', action='store', dest='year', default=datetime.now().year,
+                    help='year (default = %s' % datetime.now().year)
+parser.add_argument('--archive', action='store_true', dest='archive', default=False,
+                    help='archive mode, downloads all GDX files since 1 January for the given --year')
+parser.add_argument('--override', action='store_true', dest='override', default=False,
+                    help='write over any previously saved archive zip files')
 
 IPy_notebook = False
 
@@ -105,6 +115,7 @@ class gdx_grab():
         self.year = int(year)
         self.archive = archive
         self.override = override
+        self.filelist = filelist
         self.gdx_zipfile = str(year) + "_vSPD_GDX_Files.zip"
         self.gdx_zip = gdx_host + "Archives/" + self.gdx_zipfile
         self.gdx_ext = gdx_path + "extracted/"
@@ -128,7 +139,6 @@ class gdx_grab():
             logger.info(msg.center(self.ml, ' '))
 
         zfobj = zipfile.ZipFile(zfile)
-        print zfile
         for name in zfobj.namelist():
             uncomp = zfobj.read(name)
             otptname = self.gdx_ext + name
@@ -182,14 +192,20 @@ class gdx_grab():
         """If archive mode False; overright the last months worth of data"""
         self.gdx_last_month()
 
+    def filenameslist(self):
+        print "test"
+
 if __name__ == '__main__':
-    gx = gdx_grab(cl.gdx_host, cl.gdx_path, cl.year, cl.archive, cl.override)  # run instance
-    gx.extract_dir()
-    if cl.archive:
-        msg = "Archival mode - download zip files then current month files"
-        logger.info(msg.center(88, ' '))
-        gx.dl_archive()
-    if not cl.archive:
-        msg = "Daily download mode - download current GDX file"
-        logger.info(msg.center(88, ' '))
-        gx.dl_daily()
+    gx = gdx_grab(cl.gdx_host, cl.gdx_path, cl.year, cl.archive, cl.override, cl.filelist)  # run instance
+    if not cl.filelist:
+        gx.extract_dir()
+        if cl.archive:
+            msg = "Archival mode - download zip files then current month files"
+            logger.info(msg.center(88, ' '))
+            gx.dl_archive()
+        if not cl.archive:
+            msg = "Daily download mode - download current GDX file"
+            logger.info(msg.center(88, ' '))
+            gx.dl_daily()
+    else:
+        gx.filenamelist()
