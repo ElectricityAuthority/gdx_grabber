@@ -8,7 +8,7 @@ Copyright (C) 2014 Electricty Authority, New Zealand.
 This is the gdx_grab class.  Used to connect and download,
 and save daily vSPD market data in New Zealand.
 
-We can use this on ad adhoc basis to download and unpack archive files:
+Used on an adhoc basis, to download and unpack archive files, or daily via crontab/scheduler of your choice:
 
 For example:
 
