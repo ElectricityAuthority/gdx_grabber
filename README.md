@@ -30,4 +30,6 @@ Default use is for periodic updates; i.e. daily with crontab/schedular:
 this downloads and overwrites the last month of GDX files, as per
 http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX
 
+Note: needs testing on windows - I think there will likely be path issues (24/3)
+
 D J Hume, 24/3/2014
