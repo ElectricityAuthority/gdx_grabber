@@ -23,7 +23,7 @@ Two mode, mutually exclusive, operation:
     -f, --filelist      filelist mode
 
 Download mode -d, --download
-============================
+----------------------------
 
 Used either on:
   1. an adhoc basis, for occasional download and unpack of archives, or;
@@ -50,7 +50,7 @@ downloads and overwrites the last month of GDX files, as per
 http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX
 
 Filelist mode -f, --filelist
-============================
+----------------------------
 
 This mode is used to automatically generate the vSPD FileNameList.inc file,
 prior to a vSPD run.  It is set up to run either on an adhoc basis, or with
@@ -71,5 +71,7 @@ creates FileNameList.inc file with all February 2014, GDX files:
 
 creates FileNameList.inc file which lists the GDX filenames between 1 Jan,
 2008 and 21 Jan 2008.
+
+Not yet tested on windows environment...
 
 D J Hume, 25/3/2014
