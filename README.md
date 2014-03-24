@@ -23,7 +23,6 @@ Two mode, mutually exclusive, operation:
     -f, --filelist      filelist mode
 
 ###Download mode -d, --download
-----------------------------
 
 Used either on:
   1. an adhoc basis, for occasional download and unpack of archives, or;
@@ -49,8 +48,7 @@ Default use is for periodic updates; i.e. daily with crontab/schedular:
 downloads and overwrites the last month of GDX files, as per
 http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX
 
-Filelist mode -f, --filelist
-----------------------------
+###Filelist mode -f, --filelist
 
 This mode is used to automatically generate the vSPD FileNameList.inc file,
 prior to a vSPD run.  It is set up to run either on an adhoc basis, or with
