@@ -3,7 +3,8 @@ gdx_grabber
 
 Auto downloader/extractor for  vSPD GDX zip files from http://reports.ea.govt.nz/vSPDDD.aspx
 
-Copyright (C) 2014 Electricty Authority, New Zealand.
+Copyright (C) 2014 Electricity Authority, New Zealand.
+See, https://github.com/ElectricityAuthority/LICENSE/blob/master/LICENSE.md
 
 This is the gdx_grab class.  Used to connect and download,
 and save daily vSPD market data in New Zealand.
