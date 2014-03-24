@@ -65,9 +65,9 @@ For example:
 
     python gdx_grab.py -f -s 2014-02 -e 2014-02
 
-creates FileNameList.inc file with all February 2014, GDX files.
+creates FileNameList.inc file with all February 2014, GDX files:
 
-   python gdx_grab.py -f -s 2008-01-01 -e 2008-01-21
+    python gdx_grab.py -f -s 2008-01-01 -e 2008-01-21
 
 creates FileNameList.inc file which lists the GDX filenames between 1 Jan,
 2008 and 21 Jan 2008.
