@@ -6,10 +6,11 @@ Auto downloader/extractor for  vSPD GDX zip files from http://reports.ea.govt.nz
 Copyright (C) 2014 Electricity Authority, New Zealand.
 See, https://github.com/ElectricityAuthority/LICENSE/blob/master/LICENSE.md
 
-This is the gdx_grab class.  Used to connect and download,
-and save daily vSPD market data in New Zealand.
+Used to connect, download, extract and save daily vSPD Electricity market data.
 
-Used on an adhoc basis, to download and unpack archive files, or daily via crontab/scheduler of your choice:
+Used either on:
+  1. an adhoc basis, for occasional download and unpacking of archive files, or;
+  2. daily via crontab/scheduler of your choice:
 
 For example:
 
