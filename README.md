@@ -9,7 +9,9 @@ This is the gdx_grab class.  Used to connect and download,
 and save daily vSPD market data in New Zealand.
 
 We can use this on ad adhoc basis to download and unpack archive files:
+
 For example:
+
     python gdx_grab.py --year=2013 --archive
         - this downloads the 2013 zip file, if not already downloaded, then
           extracts the individual gdx files to the extraction dir
