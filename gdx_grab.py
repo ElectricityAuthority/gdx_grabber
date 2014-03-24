@@ -3,7 +3,7 @@ gdx_grabber
 ===========
 
 Auto downloader/extractor for  vSPD GDX zip files from
-http://reports.ea.govt.nz/vSPDDD.aspx
+http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX
 
 Copyright (C) 2014 Electricity Authority, New Zealand.
 See, https://github.com/ElectricityAuthority/LICENSE/blob/master/LICENSE.md
@@ -29,7 +29,7 @@ Default use is daily with a crontab:
 
     15 7 * * * /usr/bin/python /home/gdxgrab/gdxgrab.py >> log.tx 2>&1
 this downloads and overwrites the last month of GDX files, as per
-http://reports.ea.govt.nz/vSPDDD.aspx
+http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX
 
 D J Hume, 24/3/2014
 '''
@@ -42,11 +42,10 @@ import zipfile
 import urllib2
 import os
 from bs4 import BeautifulSoup
-
 #Setup command line option and argument parsing
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('--gdx_host', action="store", dest='gdx_host',
-                    default='http://www.reports.ea.govt.nz/vSPD/')
+                    default='http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX/')
 parser.add_argument('--gdx_path', action='store', dest='gdx_path',
                     default='/home/dave/vSPD/gdx_grab/')
 parser.add_argument('--year', action='store', dest='year', default=datetime.now().year)
@@ -66,7 +65,7 @@ if IPy_notebook:
             self.year = year
             self.archive = archive
             self.override = override
-    cl = cl('http://www.reports.ea.govt.nz/vSPD/',
+    cl = cl('http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX/',
             '/home/humed/python/pivot/pivot/gdx_grab/', 2014, False, False)
 
 #Setup logging
