@@ -47,7 +47,7 @@ parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('--gdx_host', action="store", dest='gdx_host',
                     default='http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX/')
 parser.add_argument('--gdx_path', action='store', dest='gdx_path',
-                    default='/home/dave/vSPD/gdx_grab/')
+                    default=os.getcwd() + '/')
 parser.add_argument('--year', action='store', dest='year', default=datetime.now().year)
 parser.add_argument('--archive', action='store_true', dest='archive', default=False)
 parser.add_argument('--override', action='store_true', dest='override', default=False)
@@ -158,14 +158,16 @@ class gdx_grab():
                     output.write(gdx)
                     output.close()
 
-    def dl_archive(self):
-        """If archive mode True; loop through all years to current year, then
-            download last months worth of data"""
+    def extract_dir(self):
+        """Create extraction dir if not there"""
         if not os.path.isdir(self.gdx_ext):
             msg = "Create extraction directory at: %s" % self.gdx_ext
             logger.info(msg.center(self.ml, ' '))
             os.mkdir(self.gdx_ext)
 
+    def dl_archive(self):
+        """If archive mode True; loop through all years to current year, then
+            download last months worth of data"""
         while int(self.year) <= int(datetime.now().year):
             msg = "Grab and extract gdx files for %s" % str(self.year)
             logger.info(msg.center(self.ml, ' '))
@@ -182,6 +184,7 @@ class gdx_grab():
 
 if __name__ == '__main__':
     gx = gdx_grab(cl.gdx_host, cl.gdx_path, cl.year, cl.archive, cl.override)  # run instance
+    gx.extract_dir()
     if cl.archive:
         msg = "Archival mode - download zip files then current month files"
         logger.info(msg.center(88, ' '))
