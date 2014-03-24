@@ -5,7 +5,7 @@ Auto downloader/extractor for  vSPD GDX zip files from
 http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX
 
 Copyright (C) 2014 Electricity Authority, New Zealand.
-See, https://github.com/ElectricityAuthority/LICENSE/blob/master/LICENSE.md
+https://github.com/ElectricityAuthority/LICENSE/blob/master/LICENSE.md
 
 Used to connect, download, extract and save daily vSPD Electricity market data.
 
@@ -17,11 +17,11 @@ For example:
 
     python gdx_grab.py --year=2013 --archive
 
-this downloads and extracts all gdx files starting on the 1 January, 2013.
-to the extraction dir
+this downloads and extracts all gdx files starting on the 1 January, 2013 to the
+extraction dir
 
     python gdx_grab.py --year=2008 --archive --override
-this downloads and extracts all gdx files since 1 January 2008 to theextraction
+this downloads and extracts all gdx files since 1 January 2008 to the extraction
 dir.  Specifing the --override option, overwrites any existing annual zip files. 
 
 Default use is daily with a crontab:
