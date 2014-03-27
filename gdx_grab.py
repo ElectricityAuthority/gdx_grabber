@@ -131,20 +131,13 @@ if IPy_notebook:
             date(datetime.now().year - 1, 1, 1), date(datetime.now().year - 1, 12, 31))
 
 #Setup logging
-
+log = logging.getLogger('gdx_grab')
+log.setLevel(logging.INFO)  # print everything above INFO
 formatter = logging.Formatter('|%(asctime)-6s|%(message)s|',
                               '%Y-%m-%d %H:%M:%S')
-consoleLogger = logging.StreamHandler()
-consoleLogger.setLevel(logging.INFO)
-consoleLogger.setFormatter(formatter)
-logging.getLogger('').addHandler(consoleLogger)
-fileLogger = logging.handlers.RotatingFileHandler(filename='gdx_grab.log',
-                                                  maxBytes=1024 * 1024, backupCount=9)
-fileLogger.setLevel(logging.ERROR)
-fileLogger.setFormatter(formatter)
-logging.getLogger('').addHandler(fileLogger)
-logger = logging.getLogger('gdx grab ')
-logger.setLevel(logging.INFO)
+logstream = logging.StreamHandler()
+logstream.setFormatter(formatter)
+log.addHandler(logstream)
 
 
 class gdx_grab():
@@ -181,17 +174,17 @@ class gdx_grab():
         """Given year, download GDX archive for that year, extract GDX files"""
         if ((not os.path.isfile(zfile)) or self.override):
             msg = "Downloading GDX archive for %s" % self.year
-            logger.info(msg.center(self.ml, ' '))
+            log.info(msg.center(self.ml, ' '))
             r = urllib2.urlopen(self.gdx_zip)
             gdxzip = r.read()
             msg = "Saving to %s" % zfile
-            logger.info(msg.center(self.ml, ' '))
+            log.info(msg.center(self.ml, ' '))
             output = open(zfile, 'wb')
             output.write(gdxzip)
             output.close()
         else:
             msg = "Using existing archive zipfile %s" % zfile
-            logger.info(msg.center(self.ml, ' '))
+            log.info(msg.center(self.ml, ' '))
 
         zfobj = zipfile.ZipFile(zfile)
         for name in zfobj.namelist():
@@ -199,7 +192,7 @@ class gdx_grab():
             otptname = self.gdx_ext + name
             if self.test:
                 msg = "Extract to %s" % otptname
-                logger.info(msg.center(self.ml, ' '))
+                log.info(msg.center(self.ml, ' '))
             output = open(otptname, 'wb')
             output.write(uncomp)
             output.close()
@@ -209,7 +202,7 @@ class gdx_grab():
         r = urllib2.urlopen(self.gdx_host)
         s = BeautifulSoup(r)
         msg = "Updating final price GDX files over last month"
-        logger.info(msg.center(self.ml, ' '))
+        log.info(msg.center(self.ml, ' '))
         for a in s.find_all('a', href=True):
             if 'FP_' in a['href']:
                 if "_I" not in a['href']:  # ignore interim pricing
@@ -218,7 +211,7 @@ class gdx_grab():
                     gdx = r.read()
                     if self.test:
                         msg = "Saving to %s" % self.gdx_ext + name
-                        logger.info(msg.center(self.ml, ' '))
+                        log.info(msg.center(self.ml, ' '))
                     output = open(self.gdx_ext + name, 'wb')
                     output.write(gdx)
                     output.close()
@@ -227,7 +220,7 @@ class gdx_grab():
         """Create extraction dir if not there"""
         if not os.path.isdir(self.gdx_ext):
             msg = "Create extraction directory at: %s" % self.gdx_ext
-            logger.info(msg.center(self.ml, ' '))
+            log.info(msg.center(self.ml, ' '))
             os.mkdir(self.gdx_ext)
 
     def dl_archive(self):
@@ -235,7 +228,7 @@ class gdx_grab():
             download last months worth of data"""
         while int(self.year) <= int(datetime.now().year):
             msg = "Grab and extract gdx files for %s" % str(self.year)
-            logger.info(msg.center(self.ml, ' '))
+            log.info(msg.center(self.ml, ' '))
             self.gdx_arch(self.gdx_zipfile)
             self.year += 1
             self.gdx_zipfile = str(self.year) + "_vSPD_GDX_Files.zip"
@@ -267,11 +260,11 @@ if __name__ == '__main__':
         gx.extract_dir()
         if cl.archive:
             msg = "Archival mode - download zip files then current month files"
-            logger.info(msg.center(88, ' '))
+            log.info(msg.center(88, ' '))
             gx.dl_archive()
         if not cl.archive:
             msg = "Daily download mode - download current GDX file"
-            logger.info(msg.center(88, ' '))
+            log.info(msg.center(88, ' '))
             gx.dl_daily()
     if cl.filelist:
         gx.filenamelist()
