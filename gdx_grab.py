@@ -92,8 +92,8 @@ group.add_argument('-d', '--download', action='store_true', dest='download',
 group.add_argument('-f', '--filelist', action='store_true', dest='filelist',
                    help='filelist mode')
 parser.add_argument('--gdx_host', action="store", dest='gdx_host',
-                    default='http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX/',
-                    help='url pointer (default: http://emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX/')
+                    default = 'http://www.emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX/',
+                    help='url pointer (default: http://www.emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX/')
 parser.add_argument('--gdx_path', action='store', dest='gdx_path',
                     default=os.getcwd() + '/',
                     help='path for archive zip file downloads and extraction dir (default: current working directory)')
