@@ -1,3 +1,4 @@
+#!/usr/bin/python
 '''
 gdx_grabber
 ===========
@@ -84,16 +85,18 @@ import zipfile
 import urllib2
 import os
 from bs4 import BeautifulSoup
+
 #Setup command line option and argument parsing
 parser = argparse.ArgumentParser(description='vSPD automatic GDX file downloader, extractor and FileNameList.inc generator')
 group = parser.add_mutually_exclusive_group()
+
 group.add_argument('-d', '--download', action='store_true', dest='download',
                    help='download mode')
 group.add_argument('-f', '--filelist', action='store_true', dest='filelist',
                    help='filelist mode')
 parser.add_argument('--gdx_host', action="store", dest='gdx_host',
-                    default = 'http://www.emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX/',
-                    help='url pointer (default: http://www.emi.ea.govt.nz/Datasets/Wholesale/Final_pricing/GDX/')
+                    default = '''http://www.emi.ea.govt.nz''',
+                    help='url pointer (default: http://www.emi.ea.govt.nz')
 parser.add_argument('--gdx_path', action='store', dest='gdx_path',
                     default=os.getcwd() + '/',
                     help='path for archive zip file downloads and extraction dir (default: current working directory)')
@@ -107,7 +110,6 @@ parser.add_argument('-s', '--start', action='store', dest='start', default=date(
                     help='start date required for generation of FileNameList.inc (default: %s)' % str(date(datetime.now().year - 1, 1, 1)))
 parser.add_argument('-e', '--end', action='store', dest='end', default=date(datetime.now().year - 1, 12, 31),
                     help='end date required for generation of FileNameList.inc (default: %s)' % str(date(datetime.now().year - 1, 12, 31)))
-
 
 IPy_notebook = False
 
@@ -170,23 +172,42 @@ class gdx_grab():
         self.test = True
         self.ml = 88
 
-    def gdx_arch(self, zfile):
-        """Given year, download GDX archive for that year, extract GDX files"""
-        if ((not os.path.isfile(zfile)) or self.override):
-            msg = "Downloading GDX archive for %s" % self.year
-            log.info(msg.center(self.ml, ' '))
-            r = urllib2.urlopen(self.gdx_zip)
-            gdxzip = r.read()
-            msg = "Saving to %s" % zfile
-            log.info(msg.center(self.ml, ' '))
-            output = open(zfile, 'wb')
-            output.write(gdxzip)
-            output.close()
-        else:
-            msg = "Using existing archive zipfile %s" % zfile
-            log.info(msg.center(self.ml, ' '))
 
-        zfobj = zipfile.ZipFile(zfile)
+    def build_base_url(self, year=True):
+        '''We seem to have some ulgy links here'''
+        url_db = 'Browse?directory='
+        url_pd = '&parentDirectory='
+        url_wfp = '/Datasets/Wholesale/Final_pricing'
+        if not year:
+            return self.gdx_host + '/Datasets/' + url_db + '/GDX' + url_pd + url_wfp
+        else:
+            return self.gdx_host + '/Datasets/' + url_db + '/Archives' + url_pd + url_wfp + '/GDX'
+
+
+    def get_url_links(self, url, pattern, filenamesplit):
+        r = urllib2.urlopen(url)
+        s = BeautifulSoup(r)
+        url_list = {}
+        for a in s.find_all('a', href=True):
+            if pattern in a['href']:
+                url = self.gdx_host + a['href']
+                name = a['href'].split(filenamesplit)[1][3:]
+                url_list[name] = url
+        return url_list
+
+
+    def save_file(self, url, filename):
+        r = urllib2.urlopen(url)
+        gdxzip = r.read()
+        msg = "Saving to %s" % filename
+        log.info(msg.center(self.ml, ' '))
+        output = open(filename, 'wb')
+        output.write(gdxzip)
+        output.close()
+
+
+    def unzip_file(self, filename):
+        zfobj = zipfile.ZipFile(filename)
         for name in zfobj.namelist():
             uncomp = zfobj.read(name)
             otptname = self.gdx_ext + name
@@ -197,24 +218,34 @@ class gdx_grab():
             output.write(uncomp)
             output.close()
 
+
+    def gdx_arch(self, zfile):
+        """Given year, download GDX archive for that year, extract GDX files"""
+        if ((not os.path.isfile(zfile)) or self.override):
+            msg = "Downloading GDX archive for %s" % self.year
+            log.info(msg.center(self.ml, ' '))
+            url_list = self.get_url_links(self.build_base_url(), 'GDX_Files.zip', 'Archives')
+            for zfile, url in url_list.iteritems():
+                if int(zfile[:4]) == self.year:
+                    msg = "Downloading archive zipfile %s" % zfile
+                    log.info(msg.center(self.ml, ' '))
+                    self.save_file(url, zfile)
+                    self.unzip_file(zfile)
+
+        else:
+            msg = "Using existing archive zipfile %s" % zfile
+            log.info(msg.center(self.ml, ' '))
+
+
     def gdx_last_month(self):
         """Download individual GDX files over the most recent month"""
-        r = urllib2.urlopen(self.gdx_host)
-        s = BeautifulSoup(r)
         msg = "Updating final price GDX files over last month"
         log.info(msg.center(self.ml, ' '))
-        for a in s.find_all('a', href=True):
-            if 'FP_' in a['href']:
-                if "_I" not in a['href']:  # ignore interim pricing
-                    name = a['href'].split('/')[-1]
-                    r = urllib2.urlopen(self.gdx_host + name)
-                    gdx = r.read()
-                    if self.test:
-                        msg = "Saving to %s" % self.gdx_ext + name
-                        log.info(msg.center(self.ml, ' '))
-                    output = open(self.gdx_ext + name, 'wb')
-                    output.write(gdx)
-                    output.close()
+        url_list = self.get_url_links(self.build_base_url(year=False), '/Datasets/download', 'GDX')
+        for name, url in url_list.iteritems():
+            if name.split('_')[2][0] == 'F':
+                self.save_file(url, self.gdx_ext + name)
+
 
     def extract_dir(self):
         """Create extraction dir if not there"""
