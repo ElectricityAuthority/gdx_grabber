@@ -243,8 +243,9 @@ class gdx_grab():
         log.info(msg.center(self.ml, ' '))
         url_list = self.get_url_links(self.build_base_url(year=False), '/Datasets/download', 'GDX')
         for name, url in url_list.iteritems():
-            if name.split('_')[2][0] == 'F':
-                self.save_file(url, self.gdx_ext + name)
+            if len(name.split('_')) > 2:
+                if name.split('_')[2][0] == 'F':
+                    self.save_file(url, self.gdx_ext + name)
 
 
     def extract_dir(self):
