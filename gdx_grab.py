@@ -98,7 +98,7 @@ parser.add_argument('--gdx_host', action="store", dest='gdx_host',
                     default = '''http://www.emi.ea.govt.nz''',
                     help='url pointer (default: http://www.emi.ea.govt.nz')
 parser.add_argument('--gdx_path', action='store', dest='gdx_path',
-                    default=os.getcwd() + '/',
+                    default='/home/dave/vSPD/gdx_grab/',
                     help='path for archive zip file downloads and extraction dir (default: current working directory)')
 parser.add_argument('--year', action='store', dest='year', default=datetime.now().year,
                     help='year (default = %s)' % datetime.now().year)
@@ -276,6 +276,7 @@ class gdx_grab():
         """Create the FileNameList.inc file for vSPD runs based on a start and end date."""
         import pandas as pd
         fnl = pd.DataFrame({'filename': pd.Series(os.listdir(self.gdx_ext))})
+        print len(fnl)
         fnl = fnl.ix[fnl.filename.map(lambda x: x[0:3] == 'FP_'), :]
         fnl.filename = fnl.filename.map(lambda x: x.split('.')[0])
         fnl.index = fnl.filename.map(lambda x: datetime(int(x[3:7]), int(x[7:9]), int(x[9:11])))
