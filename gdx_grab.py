@@ -100,15 +100,19 @@ parser.add_argument('--gdx_host', action="store", dest='gdx_host',
 parser.add_argument('--gdx_path', action='store', dest='gdx_path',
                     default='/home/dave/vSPD/gdx_grab/',
                     help='path for archive zip file downloads and extraction dir (default: current working directory)')
-parser.add_argument('--year', action='store', dest='year', default=datetime.now().year,
+parser.add_argument('--year', action='store', dest='year',
+                    default=datetime.now().year,
                     help='year (default = %s)' % datetime.now().year)
 parser.add_argument('--archive', action='store_true', dest='archive', default=False,
                     help='archive mode, downloads all GDX files since 1 January for the given --year')
-parser.add_argument('--override', action='store_true', dest='override', default=False,
+parser.add_argument('--override', action='store_true', dest='override',
+                    default=False,
                     help='write over any previously saved archive zip files')
-parser.add_argument('-s', '--start', action='store', dest='start', default=date(datetime.now().year - 1, 1, 1),
+parser.add_argument('-s', '--start', action='store', dest='start',
+                    default=date(datetime.now().year - 1, 1, 1),
                     help='start date required for generation of FileNameList.inc (default: %s)' % str(date(datetime.now().year - 1, 1, 1)))
-parser.add_argument('-e', '--end', action='store', dest='end', default=date(datetime.now().year - 1, 12, 31),
+parser.add_argument('-e', '--end', action='store', dest='end',
+                    default=date(datetime.now().year - 1, 12, 31),
                     help='end date required for generation of FileNameList.inc (default: %s)' % str(date(datetime.now().year - 1, 12, 31)))
 
 IPy_notebook = False
@@ -118,7 +122,8 @@ if not IPy_notebook:
 if IPy_notebook:
     class cl():
         """Manual setting of cmd_line arguments in iPython notebook"""
-        def __init__(self, download, filelist, gdx_host, gdx_path, year, archive, override, start, end):
+        def __init__(self, download, filelist, gdx_host, gdx_path, year,
+                     archive, override, start, end):
             self.download = download
             self.filelist = filelist
             self.gdx_host = gdx_host
@@ -168,20 +173,24 @@ class gdx_grab():
         self.end = end
         self.gdx_zipfile = str(year) + "_vSPD_GDX_Files.zip"
         self.gdx_zip = gdx_host + "Archives/" + self.gdx_zipfile
-        self.gdx_ext = gdx_path + "extracted/"
+        self.gdx_ext = gdx_path + "extracted"
         self.test = True
         self.ml = 88
 
 
     def build_base_url(self, year=True):
         '''We seem to have some ulgy links here'''
-        url_db = 'Browse?directory='
-        url_pd = '&parentDirectory='
-        url_wfp = '/Datasets/Wholesale/Final_pricing'
+        # url_db = 'Browse?directory='
+        # url_pd = '&parentDirectory='
+        # url_wfp = '/Datasets/Wholesale/Final_pricing'
         if not year:
-            return self.gdx_host + '/Datasets/' + url_db + '/GDX' + url_pd + url_wfp
+            url_link = self.gdx_host + '/Datasets/Wholesale/Final_pricing/GDX'
+            # print("Download URL: %s" % url_link)
+            return url_link
         else:
-            return self.gdx_host + '/Datasets/' + url_db + '/Archives' + url_pd + url_wfp + '/GDX'
+            url_link = self.gdx_host + '/Datasets/Wholesale/Final_pricing/Archives/GDX'
+            # print("Download USL: %s" % url_link)
+            return url_link
 
 
     def get_url_links(self, url, pattern, filenamesplit):
@@ -191,8 +200,9 @@ class gdx_grab():
         for a in s.find_all('a', href=True):
             if pattern in a['href']:
                 url = self.gdx_host + a['href']
-                name = a['href'].split(filenamesplit)[1][3:]
+                name = a['href'].split(filenamesplit)[1]
                 url_list[name] = url
+                # print(url)
         return url_list
 
 
@@ -241,11 +251,14 @@ class gdx_grab():
         """Download individual GDX files over the most recent month"""
         msg = "Updating final price GDX files over last month"
         log.info(msg.center(self.ml, ' '))
-        url_list = self.get_url_links(self.build_base_url(year=False), '/Datasets/download', 'GDX')
+        url_list = self.get_url_links(self.build_base_url(year=False),
+                                      '.gdx', 'GDX')
         for name, url in url_list.iteritems():
+            # print name, url
             if len(name.split('_')) > 2:
                 if name.split('_')[2][0] == 'F':
                     self.save_file(url, self.gdx_ext + name)
+        # print url_list
 
 
     def extract_dir(self):
@@ -273,13 +286,16 @@ class gdx_grab():
         self.gdx_last_month()
 
     def filenamelist(self):
-        """Create the FileNameList.inc file for vSPD runs based on a start and end date."""
+        """Create the FileNameList.inc file for vSPD runs based on a start and
+        end date."""
         import pandas as pd
         fnl = pd.DataFrame({'filename': pd.Series(os.listdir(self.gdx_ext))})
-        print len(fnl)
+        # print len(fnl)
         fnl = fnl.ix[fnl.filename.map(lambda x: x[0:3] == 'FP_'), :]
         fnl.filename = fnl.filename.map(lambda x: x.split('.')[0])
-        fnl.index = fnl.filename.map(lambda x: datetime(int(x[3:7]), int(x[7:9]), int(x[9:11])))
+        fnl.index = fnl.filename.map(lambda x: datetime(int(x[3:7]),
+                                                        int(x[7:9]),
+                                                        int(x[9:11])))
         fnl = fnl.sort()
         f = open('FileNameList.inc', 'w')
         for fn in fnl.ix[self.start:self.end, :].filename.values:
@@ -288,7 +304,8 @@ class gdx_grab():
 
 
 if __name__ == '__main__':
-    gx = gdx_grab(cl.download, cl.filelist, cl.gdx_host, cl.gdx_path, cl.year, cl.archive, cl.override, cl.start, cl.end)  # run instance
+    gx = gdx_grab(cl.download, cl.filelist, cl.gdx_host, cl.gdx_path, cl.year,
+                  cl.archive, cl.override, cl.start, cl.end)  # run instance
     if cl.download:
         gx.extract_dir()
         if cl.archive:
